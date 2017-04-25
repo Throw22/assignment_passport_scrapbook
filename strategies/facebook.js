@@ -11,17 +11,6 @@ const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || FACEBOOK_APP_ID_LOCAL;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET ||
   FACEBOOK_APP_SECRET_LOCAL;
 
-//User Serial/DeSerial
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-
 var fbStrat = new FacebookStrategy(
   {
     clientID: FACEBOOK_APP_ID || "hi",
@@ -30,7 +19,6 @@ var fbStrat = new FacebookStrategy(
     passReqToCallback: true
   },
   function(req, accessToken, refreshToken, profile, done) {
-    // console.log("profile", profile);
     const facebookId = profile.id;
     const displayName = profile.displayName;
     console.log("req.user in fbstat", req.user);
@@ -50,7 +38,6 @@ var fbStrat = new FacebookStrategy(
           console.log(err);
           return done(err);
         }
-        console.log("H", user);
         if (!user) {
           user = new User({facebookId, displayName: profile.displayName});
           console.log("after new user save", user);
@@ -67,5 +54,15 @@ var fbStrat = new FacebookStrategy(
     }
   }
 );
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 module.exports = {fbStrat};

@@ -6,21 +6,19 @@ const User = require("../models/user");
 
 //FB Graph Api
 var {FB, FacebookApiException} = require("fb");
+//FB strategy
+// const facebook = require("../strategies/facebook");
+// passport.use(facebook.fbStrat);
+// const passport = require("passport");
 
 router.get("/", (req, res) => {
-  // console.log("req.user in get router", req.user);
+  console.log("req.user in get router", req.user);
   if (req.user) {
     res.render("home");
   } else {
     res.render("login");
   }
 });
-//Facebook Strategy
-const facebook = require("../strategies/facebook");
-const passport = require("passport");
-passport.use(facebook.fbStrat);
-
-//Home
 
 //Login
 router.get("/logout", function(req, res) {
@@ -37,6 +35,11 @@ router.get("/terms", function(req, res) {
 });
 
 //Facebook
+
+// router.get("/auth/facebook", (req, res, next) => {
+//   passport.authenticate("facebook" + req.user);
+//   next();
+// });
 router.get("/auth/facebook", passport.authenticate("facebook"));
 
 router.get(
@@ -46,7 +49,7 @@ router.get(
     failureRedirect: "/"
   })
 );
-////
+
 module.exports = router;
 
 //Login path

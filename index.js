@@ -14,17 +14,17 @@ app.use(
   })
 );
 
-// require Passport and the Local Strategy
+//Passport
 const passport = require("passport");
 app.use(passport.initialize());
 app.use(passport.session());
+const facebook = require("./strategies/facebook");
+passport.use(facebook.fbStrat);
 
-// User and Mongoose code
-
+// Mongoose
 const mongoose = require("mongoose");
 const User = require("./models/user");
 mongoose.connect("mongodb://localhost/passport-demo");
-
 // Local Strategy Set Up
 
 // const LocalStrategy = require("passport-local").Strategy;
