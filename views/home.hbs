@@ -1,0 +1,10 @@
+<h1>Welcome, {{user.username}}</h1>
+
+<h2>Facebook</h2>
+{{#if user.facebookId}}
+  Connected!
+{{else}}
+  <a href="/auth/facebook">Link Facebook</a>
+{{/if}}
+
+{{user}}
