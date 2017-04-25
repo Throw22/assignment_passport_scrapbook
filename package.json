@@ -24,6 +24,7 @@
     "express": "^4.15.2",
     "express-flash": "0.0.2",
     "express-session": "^1.15.2",
+    "fb": "^2.0.0",
     "hbs": "^4.0.1",
     "mongoose": "^4.9.6",
     "mongoose-unique-validator": "^1.0.5",

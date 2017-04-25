@@ -1,10 +1,9 @@
 const app = require("express")();
-const cookieParser = require("cookie-parser");
+
 const bodyParser = require("body-parser");
 const expressSession = require("express-session");
 const flash = require("express-flash");
 
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(flash());
 app.use(

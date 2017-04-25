@@ -1,13 +1,53 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 //Mongoose
-const mongoose = require('mongoose');
-const User = require('../models/user');
+const mongoose = require("mongoose");
+const User = require("../models/user");
 
+//FB Graph Api
+var {FB, FacebookApiException} = require("fb");
+
+router.get("/", (req, res) => {
+  // console.log("req.user in get router", req.user);
+  if (req.user) {
+    res.render("home");
+  } else {
+    res.render("login");
+  }
+});
 //Facebook Strategy
-const facebook = require('../strategies/facebook');
+const facebook = require("../strategies/facebook");
+const passport = require("passport");
+passport.use(facebook.fbStrat);
 
-const passport = require('passport');
+//Home
+
+//Login
+router.get("/logout", function(req, res) {
+  req.logout();
+  res.redirect("/");
+});
+
+router.get("/privacy", function(req, res) {
+  res.render("privacy");
+});
+
+router.get("/terms", function(req, res) {
+  res.render("terms");
+});
+
+//Facebook
+router.get("/auth/facebook", passport.authenticate("facebook"));
+
+router.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", {
+    successRedirect: "/",
+    failureRedirect: "/"
+  })
+);
+////
+module.exports = router;
 
 //Login path
 //Log in with one of the five
@@ -18,48 +58,3 @@ const passport = require('passport');
 //If logged in with facebook, be able to connect the other 4
 
 //if login through facebook, then use
-passport.use(facebook.fbStrat);
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
-
-//Routes
-router.get('/', (req, res) => {
-  if (req.user) {
-    res.render('home');
-  } else {
-    res.render('login');
-  }
-});
-
-router.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/');
-});
-
-router.get('/privacy', function(req, res) {
-  res.render('privacy');
-});
-
-router.get('/terms', function(req, res) {
-  res.render('terms');
-});
-
-router.get('/auth/facebook', passport.authenticate('facebook'));
-
-router.get(
-  '/auth/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/'
-  })
-);
-
-module.exports = router;
