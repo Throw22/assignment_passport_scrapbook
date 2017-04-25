@@ -1,80 +1,60 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 //Mongoose
-const mongoose = require("mongoose");
-const User = require("../models/user");
+const mongoose = require('mongoose');
+const User = require('../models/user');
 
 //Facebook Strategy
-const passport = require("passport");
-const FacebookStrategy = require("passport-facebook").Strategy;
-const {
-  FACEBOOK_APP_ID_LOCAL,
-  FACEBOOK_APP_SECRET_LOCAL
-} = require("../tokens");
-const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID || FACEBOOK_APP_ID_LOCAL;
-console.log(FACEBOOK_APP_ID);
-const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET ||
-  FACEBOOK_APP_SECRET_LOCAL;
+const facebook = require('../strategies/facebook');
 
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: FACEBOOK_APP_ID || "hi",
-      clientSecret: FACEBOOK_APP_SECRET || "no",
-      callbackURL: "http://localhost:4000/auth/facebook/callback",
-      passReqToCallback: true
-    },
-    function(req, accessToken, refreshToken, profile, done) {
-      const facebookId = profile.id;
-      if (req.user) {
-        req.user.facebookId = facebookId;
-        req.user.save((err, user) => {
-          if (err) {
-            done(err);
-          } else {
-            done(null, user);
-          }
-        });
-      } else {
-        User.findOne({facebookId}, function(err, user) {
-          if (err) {
-            console.log(err);
-            return done(err);
-          }
-          console.log("H", user);
-          if (!user) {
-            user = new User({facebookId, username: profile.displayName});
-            console.log(user);
-            user.save((err, user) => {
-              if (err) {
-                console.log(err);
-              }
-              done(null, user);
-            });
-          } else {
-            done(null, user);
-          }
-        });
-      }
-    }
-  )
-);
+const passport = require('passport');
+
+//Login path
+//Log in with one of the five
+//Either log them and create the user if they haven't logged in with that account before
+//Or log them in with the already created user
+
+//Connect paths
+//If logged in with facebook, be able to connect the other 4
+
+//if login through facebook, then use
+passport.use(facebook.fbStrat);
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
 //Routes
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
   if (req.user) {
-    res.render("home");
+    res.render('home');
   } else {
-    res.render("login");
+    res.render('login');
   }
 });
 
-router.get("/auth/facebook", passport.authenticate("facebook"));
+router.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/');
+});
+
+router.get('/privacy', function(req, res) {
+  res.render('privacy');
+});
+
+router.get('/auth/facebook', passport.authenticate('facebook'));
 
 router.get(
-  "/auth/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: "/",
-    failureRedirect: "/"
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/'
   })
 );
 
