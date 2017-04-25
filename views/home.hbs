@@ -1,0 +1,17 @@
+<h1>Welcome, {{user.username}}</h1>
+
+<h2>Facebook</h2>
+{{#if user.facebookId}}
+  Connected!
+
+  <ul>
+    <li>{{fbResponse.name}}</li>
+    <li>{{fbResponse.link}}</li>
+    <li><img src="{{fbResponse.picture.data.url}}"></img</li>
+    <li>{{fbResponse.gender}}</li>
+  </ul>
+{{else}}
+  <a href="/auth/facebook">Link Facebook</a>
+{{/if}}
+
+{{user}}
