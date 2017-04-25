@@ -48,6 +48,10 @@ router.get('/privacy', function(req, res) {
   res.render('privacy');
 });
 
+router.get('/terms', function(req, res) {
+  res.render('terms');
+});
+
 router.get('/auth/facebook', passport.authenticate('facebook'));
 
 router.get(
